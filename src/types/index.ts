@@ -47,6 +47,7 @@ export interface UIState {
   formModalOpen: boolean;
   editingLog: KeyboardLog | null;
   detailLog: KeyboardLog | null;
+  importExportModalOpen: boolean;
 }
 
 export const SWITCH_TYPE_LABELS: Record<SwitchType, string> = {

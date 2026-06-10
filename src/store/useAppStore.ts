@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import type { KeyboardLog, FilterState, UIState, ViewMode } from '@/types';
 import { sampleData } from '@/data/sampleData';
+import type { ImportApplyResult, ValidatedLog } from '@/utils/importExport';
+import { applyImport, genNewId } from '@/utils/importExport';
 
 const STORAGE_KEY = 'keyfeeling-logs-v1';
 
@@ -28,7 +30,7 @@ function saveToStorage(logs: KeyboardLog[]) {
 }
 
 function genId() {
-  return 'log-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+  return genNewId();
 }
 
 interface AppState {
@@ -40,6 +42,12 @@ interface AppState {
   createLog: (data: Omit<KeyboardLog, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateLog: (id: string, data: Partial<KeyboardLog>) => void;
   deleteLog: (id: string) => void;
+  importLogs: (
+    selectedForImport: string[],
+    fileValidLogs: KeyboardLog[],
+    duplicateWithExisting: ValidatedLog[],
+    strategy: 'skip' | 'overwrite' | 'regenerate',
+  ) => ImportApplyResult;
   setViewMode: (mode: ViewMode) => void;
   toggleCompareSelect: (id: string) => void;
   clearCompareSelect: () => void;
@@ -47,6 +55,8 @@ interface AppState {
   closeFormModal: () => void;
   openDetail: (log: KeyboardLog) => void;
   closeDetail: () => void;
+  openImportExport: () => void;
+  closeImportExport: () => void;
 }
 
 const defaultFilter: FilterState = {
@@ -62,6 +72,7 @@ const defaultUI: UIState = {
   formModalOpen: false,
   editingLog: null,
   detailLog: null,
+  importExportModalOpen: false,
 };
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -100,6 +111,19 @@ export const useAppStore = create<AppState>((set, get) => ({
     saveToStorage(next);
   },
 
+  importLogs: (selectedForImport, fileValidLogs, duplicateWithExisting, strategy) => {
+    const result = applyImport(
+      get().logs,
+      selectedForImport,
+      fileValidLogs,
+      duplicateWithExisting,
+      strategy,
+    );
+    set({ logs: result.finalLogs });
+    saveToStorage(result.finalLogs);
+    return result;
+  },
+
   setViewMode: (mode) => set({ ui: { ...get().ui, viewMode: mode } }),
 
   toggleCompareSelect: (id) => {
@@ -124,6 +148,9 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   openDetail: (log) => set({ ui: { ...get().ui, detailLog: log } }),
   closeDetail: () => set({ ui: { ...get().ui, detailLog: null } }),
+
+  openImportExport: () => set({ ui: { ...get().ui, importExportModalOpen: true } }),
+  closeImportExport: () => set({ ui: { ...get().ui, importExportModalOpen: false } }),
 }));
 
 export function useFilteredLogs(): KeyboardLog[] {
