@@ -292,8 +292,6 @@ export function applyImport(
     toAdd.push(log);
   }
 
-  const existingLogMap = new Map(existingLogs.map((l) => [l.id, l]));
-
   for (const dup of selectedDup) {
     switch (strategy) {
       case 'skip':
@@ -337,9 +335,7 @@ export function applyImport(
     }
   }
 
-  finalLogs = [...toAdd, ...toRegenerate, ...finalLogs.filter((l) => !toOverwrite.some((ow) => ow.id === l.id))];
-
-  void existingLogMap;
+  finalLogs = [...toAdd, ...toRegenerate, ...finalLogs];
 
   return {
     toAdd,
