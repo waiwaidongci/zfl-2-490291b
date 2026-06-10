@@ -39,7 +39,7 @@ export interface FilterState {
   searchKeyword: string;
 }
 
-export type ViewMode = 'list' | 'compare';
+export type ViewMode = 'list' | 'compare' | 'stats';
 
 export interface UIState {
   viewMode: ViewMode;

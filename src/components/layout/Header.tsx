@@ -1,4 +1,4 @@
-import { Keyboard, Plus, GitCompare, List } from 'lucide-react';
+import { Keyboard, Plus, GitCompare, List, BarChart3 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Header() {
@@ -25,31 +25,33 @@ export default function Header() {
         </div>
 
         <nav className="flex items-center gap-2">
-          <div className="hidden sm:flex items-center gap-1 p-1 rounded-lg bg-ink-800/80 border border-ink-700/60">
+          <div className="flex items-center gap-1 p-1 rounded-lg bg-ink-800/80 border border-ink-700/60">
             <button
               onClick={() => clearCompareSelect()}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+              className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 viewMode === 'list'
                   ? 'bg-brass-300/20 text-brass-100 border border-brass-300/30'
                   : 'text-ink-400 hover:text-ink-200'
               }`}
+              title="列表"
             >
               <List className="h-3.5 w-3.5" />
-              <span>列表</span>
+              <span className="hidden sm:inline">列表</span>
             </button>
             <button
               onClick={() => compareCount >= 2 && setViewMode('compare')}
               disabled={compareCount < 2}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+              className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 viewMode === 'compare'
                   ? 'bg-brass-300/20 text-brass-100 border border-brass-300/30'
                   : compareCount >= 2
                     ? 'text-ink-400 hover:text-ink-200'
                     : 'text-ink-600 cursor-not-allowed'
               }`}
+              title="对比"
             >
               <GitCompare className="h-3.5 w-3.5" />
-              <span>对比</span>
+              <span className="hidden sm:inline">对比</span>
               {compareCount > 0 && (
                 <span
                   className={`ml-0.5 inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full text-[10px] font-bold ${
@@ -61,6 +63,18 @@ export default function Header() {
                   {compareCount}/2
                 </span>
               )}
+            </button>
+            <button
+              onClick={() => setViewMode('stats')}
+              className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                viewMode === 'stats'
+                  ? 'bg-brass-300/20 text-brass-100 border border-brass-300/30'
+                  : 'text-ink-400 hover:text-ink-200'
+              }`}
+              title="统计"
+            >
+              <BarChart3 className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">统计</span>
             </button>
           </div>
 

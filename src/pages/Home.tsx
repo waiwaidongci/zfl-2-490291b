@@ -1,6 +1,7 @@
 import Header from '@/components/layout/Header';
 import ListView from '@/components/list/ListView';
 import CompareView from '@/components/compare/CompareView';
+import StatsView from '@/components/stats/StatsView';
 import FormModal from '@/components/form/FormModal';
 import DetailModal from '@/components/detail/DetailModal';
 import { useAppStore } from '@/store/useAppStore';
@@ -12,6 +13,18 @@ export default function Home() {
 
   const canCompare = selectedForCompare.length >= 2;
   const showCompareBanner = canCompare && viewMode === 'list';
+
+  const renderView = () => {
+    switch (viewMode) {
+      case 'compare':
+        return <CompareView />;
+      case 'stats':
+        return <StatsView />;
+      case 'list':
+      default:
+        return <ListView />;
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -57,7 +70,7 @@ export default function Home() {
       )}
 
       <main className="container flex-1 py-6 sm:py-8 w-full">
-        {viewMode === 'list' ? <ListView /> : <CompareView />}
+        {renderView()}
       </main>
 
       <footer className="border-t border-ink-700/40 py-6 mt-8">
